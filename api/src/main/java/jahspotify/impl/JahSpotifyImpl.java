@@ -645,7 +645,7 @@ public class JahSpotifyImpl implements JahSpotify
         trimmedPlaylist.setNumTracks(numEntries == 0 ? playlist.getNumTracks() : numEntries);
         trimmedPlaylist.setIndex(index);
         // FIXME: Trim this list
-        trimmedPlaylist.setTracks(playlist.getTracks().subList(index, numEntries));
+        trimmedPlaylist.setTracks(playlist.getTracks().subList(index, Math.min(playlist.getTracks().size(), numEntries)));
         return null;
     }
 

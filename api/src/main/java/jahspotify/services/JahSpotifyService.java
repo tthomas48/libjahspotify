@@ -31,6 +31,10 @@ public class JahSpotifyService
     	}
     	return instance;
     }
+    
+    public static boolean isInitialized() {
+    	return instance != null;
+    }
 
     public static void initialize(File tempFolder) {
     	if (tempFolder == null || !tempFolder.isDirectory() || !tempFolder.exists())

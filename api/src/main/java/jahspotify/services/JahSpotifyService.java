@@ -62,7 +62,6 @@ public class JahSpotifyService
             if (!_jahSpotify.isStarted()) {
             	_jahSpotify.initialize(tempFolder);
             }
-            _jahSpotify.addPlaybackListener(MediaPlayer.getInstance());
         }
     }
 

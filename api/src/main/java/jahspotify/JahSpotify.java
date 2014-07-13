@@ -228,12 +228,6 @@ public interface JahSpotify {
 
 	/**
 	 * 
-	 */
-	public void clearPlaybackListeners();
-
-
-	/**
-	 * 
 	 * @param playlistListener
 	 */
 	public void addPlaylistListener(PlaylistListener playlistListener);

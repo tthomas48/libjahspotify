@@ -742,12 +742,6 @@ public class JahSpotifyImpl implements JahSpotify
     }
 
     @Override
-    public void clearPlaybackListeners()
-    {
-        _playbackListeners.clear();
-    }
-
-    @Override
     public void addPlaylistListener(final PlaylistListener playlistListener)
     {
         _playlistListeners.add(playlistListener);

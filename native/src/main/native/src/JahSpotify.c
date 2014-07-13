@@ -1412,12 +1412,12 @@ JNIEXPORT jint JNICALL Java_jahspotify_impl_JahSpotifyImpl_nativePlayTrack(JNIEn
 
 		int count = 0;
 		while (!sp_track_is_loaded(t) && count < 4) {
-			usleep(250);
+			usleep(500);
 			count++;
 		}
 
 		if (count == 4) {
-			log_warn("jahspotify", "nativePlayTrack", "Track not loaded after 1 second, will have to wait for callback");
+			log_warn("jahspotify", "nativePlayTrack", "Track not loaded after 2 seconds, will have to wait for callback");
 			return -1;
 		}
 

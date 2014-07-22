@@ -13,6 +13,7 @@ import jahspotify.media.Artist;
 import jahspotify.media.Image;
 import jahspotify.media.ImageSize;
 import jahspotify.media.Link;
+import jahspotify.media.LoadableListener;
 import jahspotify.media.Playlist;
 import jahspotify.media.PlaylistContainer;
 import jahspotify.media.TopListType;
@@ -680,8 +681,16 @@ public class JahSpotifyImpl implements JahSpotify
     public void play(final Link link)
     {
         ensureLoggedIn();
-        nativePlayTrack(link.asString());
-        status = PlayerStatus.PLAYING;
+        Track t = readTrack(link);
+        t.addLoadableListener(new LoadableListener<Track>() {
+        	@Override
+        	public void loaded(Track media) {
+                if (nativePlayTrack(link.asString()) == 0) {
+                    status = PlayerStatus.PLAYING;
+                    return;
+                  }
+        	}
+        });
     }
 
     private void ensureLoggedIn()

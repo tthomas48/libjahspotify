@@ -1288,10 +1288,11 @@ JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrieveTrack(JNIE
 	return trackInstance;
 }
 
-JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrievePlaylist(JNIEnv *env, jobject obj, jstring uri) {
+JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrievePlaylist(JNIEnv *env, jobject obj, jstring uri, jstring username) {
 	jobject playlistInstance;
 	sp_playlist *playlist;
 	const char *nativeUri = NULL;
+  const char *nativeUsername = NULL;
 	sp_link *link = NULL;
 
 	if (uri) {
@@ -1308,7 +1309,9 @@ JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrievePlaylist(J
 
 		playlist = sp_playlist_create(g_sess, link);
 	} else {
-		playlist = sp_session_starred_create(g_sess);
+		nativeUsername = (*env)->GetStringUTFChars(env, username, NULL );
+
+    playlist = sp_session_starred_for_user_create(g_sess, nativeUsername);
 	}
 
 	playlistInstance = createJPlaylist(env, NULL, playlist);
@@ -1326,7 +1329,7 @@ static void SP_CALLCONV toplistCallback(sp_toplistbrowse *result, void *userdata
 }
 JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrieveTopList(JNIEnv *env, jobject obj, jint type, jint countrycode) {
 	jobject searchResult = createSearchResult(env);
-	sp_toplistbrowse_create(g_sess, (int) type, countrycode == -1 ? SP_TOPLIST_REGION_EVERYWHERE : countrycode, NULL, toplistCallback, (*env)->NewGlobalRef(env, searchResult));
+	sp_toplistbrowse_create(g_sess, (int) type, countrycode == -1 ? SP_TOPLIST_REGION_USER : countrycode, NULL, toplistCallback, (*env)->NewGlobalRef(env, searchResult));
 	return searchResult;
 }
 

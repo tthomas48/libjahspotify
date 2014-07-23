@@ -602,7 +602,7 @@ public class JahSpotifyImpl implements JahSpotify
         _libSpotifyLock.lock();
         try
         {
-            final Playlist playlist = retrievePlaylist(uri == null ? null : uri.asString());
+            final Playlist playlist = retrievePlaylist(uri == null ? null : uri.asString(), null);
             if (index == 0 && numEntries == 0 || playlist == null)
                 return playlist;
 
@@ -615,6 +615,27 @@ public class JahSpotifyImpl implements JahSpotify
         }
     }
 
+    
+    @Override
+    public Playlist readStarredPlaylist(final String username, final int index, final int numEntries)
+    {
+        ensureLoggedIn();
+        _libSpotifyLock.lock();
+        try
+        {
+            final Playlist playlist = retrievePlaylist(null, username);
+            if (index == 0 && numEntries == 0 || playlist == null)
+                return playlist;
+
+            // Trim the playlist accordingly now
+            return trimPlaylist(playlist, index, numEntries);
+        }
+        finally
+        {
+            _libSpotifyLock.unlock();
+        }
+    }
+    
     @Override
 	public SearchResult getTopList(final TopListType type) {
     	return getTopList(type, null);
@@ -647,7 +668,7 @@ public class JahSpotifyImpl implements JahSpotify
         trimmedPlaylist.setIndex(index);
         // FIXME: Trim this list
         trimmedPlaylist.setTracks(playlist.getTracks().subList(index, Math.min(playlist.getTracks().size(), numEntries)));
-        return null;
+        return trimmedPlaylist;
     }
 
     @Override
@@ -891,7 +912,7 @@ public class JahSpotifyImpl implements JahSpotify
 
     private native Track retrieveTrack(String uri);
 
-    private native Playlist retrievePlaylist(String uri);
+    private native Playlist retrievePlaylist(String uri, String username);
     private native SearchResult retrieveTopList(int type, int countrycode);
 
     private native void setBitrate(int bitrate);

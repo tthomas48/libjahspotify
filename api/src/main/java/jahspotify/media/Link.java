@@ -179,7 +179,7 @@ public class Link implements Comparable<Link>, Serializable
      * @param query The search query to set (for search) or {@code null}.
      * @throws InvalidSpotifyURIException If the Spotify URI is invalid.
      */
-    private Link(Type type, String id, String user, String query)
+    public Link(Type type, String id, String user, String query)
     {
         this.type = type;
         this.id = id;

@@ -111,6 +111,9 @@ public interface JahSpotify {
 	 */
 	public Playlist readPlaylist(Link link, final int index,
 			final int numEntries);
+	
+	public Playlist readStarredPlaylist(String username, final int index,
+			final int numEntries);	
 
 	/**
 	 * Retrieves a toplist.

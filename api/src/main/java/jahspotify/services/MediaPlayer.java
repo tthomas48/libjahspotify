@@ -17,6 +17,7 @@ import javax.sound.sampled.SourceDataLine;
 
 /**
  * Class which plays the music from libspotify.
+ * 
  * @author Niels
  */
 public class MediaPlayer implements PlaybackListener {
@@ -34,6 +35,7 @@ public class MediaPlayer implements PlaybackListener {
 	private int volume = 100;
 
 	private static MediaPlayer instance;
+
 	public static synchronized MediaPlayer getInstance() {
 		if (instance == null)
 			instance = new MediaPlayer();
@@ -44,8 +46,7 @@ public class MediaPlayer implements PlaybackListener {
 	 * Reset counters.
 	 */
 	public void changeSong() {
-		if (audio != null && audio.isOpen())
-			audio.close();
+		close();
 		audio = null;
 		positionOffset = 0;
 	}
@@ -82,7 +83,8 @@ public class MediaPlayer implements PlaybackListener {
 	 */
 	private boolean next() {
 		Track track = getNextTrack(true);
-		if (track == null) return false;
+		if (track == null)
+			return false;
 
 		currentTrack = track;
 		history.add(0, currentTrack);
@@ -108,7 +110,8 @@ public class MediaPlayer implements PlaybackListener {
 	 */
 	@Override
 	public void playTokenLost() {
-		if (isPlaying()) pause();
+		if (isPlaying())
+			pause();
 	}
 
 	/**
@@ -128,9 +131,10 @@ public class MediaPlayer implements PlaybackListener {
 		}
 		playing = !playing;
 	}
-	
+
 	public void pause(boolean play) {
-		if (play == playing) return;
+		if (play == playing)
+			return;
 		pause();
 	}
 
@@ -159,11 +163,13 @@ public class MediaPlayer implements PlaybackListener {
 	}
 
 	public void seekCallback(int position) {
-		positionOffset = position - ((int) audio.getMicrosecondPosition() / 1000);
+		positionOffset = position
+				- ((int) audio.getMicrosecondPosition() / 1000);
 	}
 
 	/**
 	 * Called from libspotify.
+	 * 
 	 * @param buffer
 	 * @return
 	 */
@@ -179,7 +185,8 @@ public class MediaPlayer implements PlaybackListener {
 		int written = audio.write(buffer, 0, toWrite);
 
 		try {
-			for (MediaStreamer streamer : new ArrayList<MediaStreamer>(streamers)) {
+			for (MediaStreamer streamer : new ArrayList<MediaStreamer>(
+					streamers)) {
 				try {
 					streamer.addToBuffer(buffer, written);
 				} catch (Throwable t) {
@@ -196,6 +203,7 @@ public class MediaPlayer implements PlaybackListener {
 
 	/**
 	 * Called from libspotify.
+	 * 
 	 * @param rate
 	 * @param channels
 	 */
@@ -203,6 +211,9 @@ public class MediaPlayer implements PlaybackListener {
 	public void setAudioFormat(int rate, int channels) {
 		if (audio != null && rate == this.rate && channels == this.channels)
 			return;
+
+		close();
+
 		this.rate = rate;
 		this.channels = channels;
 
@@ -214,7 +225,7 @@ public class MediaPlayer implements PlaybackListener {
 					format.getChannels(), format.getFrameSize(),
 					format.getFrameRate(), false);
 
-			synchronized(streamers) {
+			synchronized (streamers) {
 				for (MediaStreamer streamer : streamers) {
 					try {
 						streamer.setAudioFormat(format);
@@ -264,16 +275,23 @@ public class MediaPlayer implements PlaybackListener {
 	}
 
 	private void setVolumeToAudio(int volume) {
-		if (audio == null) return;
+		if (audio == null)
+			return;
 		if (audio.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-			FloatControl volumeControl = (FloatControl) audio.getControl(FloatControl.Type.MASTER_GAIN);
-			
-			// Copied from: http://www.javadocexamples.com/java_source/com/limegroup/gnutella/gui/mp3/BasicPlayer.java.html#line.615
+			FloatControl volumeControl = (FloatControl) audio
+					.getControl(FloatControl.Type.MASTER_GAIN);
+
+			// Copied from:
+			// http://www.javadocexamples.com/java_source/com/limegroup/gnutella/gui/mp3/BasicPlayer.java.html#line.615
 			double minGainDB = volumeControl.getMinimum();
-			double ampGainDB = Math.min(.5*volumeControl.getMaximum(), 0) - volumeControl.getMinimum();
-			double cste = Math.log(10.0)/20;
-			double valueDB = minGainDB + (1/cste)*Math.log(1+(Math.exp(cste*ampGainDB)-1)* (volume / 100f));
-			volumeControl.setValue((float)valueDB);
+			double ampGainDB = Math.min(.5 * volumeControl.getMaximum(), 0)
+					- volumeControl.getMinimum();
+			double cste = Math.log(10.0) / 20;
+			double valueDB = minGainDB
+					+ (1 / cste)
+					* Math.log(1 + (Math.exp(cste * ampGainDB) - 1)
+							* (volume / 100f));
+			volumeControl.setValue((float) valueDB);
 		}
 	}
 
@@ -297,7 +315,7 @@ public class MediaPlayer implements PlaybackListener {
 				audio.drain();
 			}
 		}
-			
+
 		if (!next()) {
 			pause();
 			currentTrack = null;
@@ -308,12 +326,14 @@ public class MediaPlayer implements PlaybackListener {
 	@Override
 	public Link nextTrackToPreload() {
 		Track track = getNextTrack(false);
-		if (track == null) return null;
+		if (track == null)
+			return null;
 		return track.getId();
 	}
 
 	/**
 	 * Get the next track
+	 * 
 	 * @return
 	 */
 	public Track getNextTrack(boolean popQueue) {
@@ -333,19 +353,21 @@ public class MediaPlayer implements PlaybackListener {
 	public void addQueue(Queue<Link> queue) {
 		queues.add(queue);
 	}
+
 	public void removeQueue(Queue<Link> queue) {
 		queues.remove(queue);
 	}
 
 	public void addStreamer(MediaStreamer streamer) {
-		synchronized(streamers) {
+		synchronized (streamers) {
 			streamers.add(streamer);
 			if (audio != null)
 				streamer.setAudioFormat(audio.getFormat());
 		}
 	}
+
 	public void removeStreamer(MediaStreamer streamer) {
-		synchronized(streamers) {
+		synchronized (streamers) {
 			streamers.remove(streamer);
 		}
 	}
@@ -353,5 +375,12 @@ public class MediaPlayer implements PlaybackListener {
 	public List<Track> getHistory() {
 		return history;
 	}
-	
+
+	private void close() {
+		if (audio != null && audio.isOpen()) {
+			audio.close();
+		}
+
+	}
+
 }

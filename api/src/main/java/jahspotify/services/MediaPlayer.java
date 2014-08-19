@@ -82,6 +82,7 @@ public class MediaPlayer implements PlaybackListener {
 	 * @return
 	 */
 	private boolean next() {
+		changeSong();
 		Track track = getNextTrack(true);
 		if (track == null)
 			return false;
@@ -124,10 +125,14 @@ public class MediaPlayer implements PlaybackListener {
 		}
 		if (playing) {
 			spotify.pause();
-			audio.stop();
+			if (audio != null && audio.isOpen()) {
+  				audio.stop();
+			}
 		} else {
 			spotify.resume();
-			audio.start();
+			if (audio != null) {
+				audio.start();
+			}
 		}
 		playing = !playing;
 	}
@@ -379,6 +384,7 @@ public class MediaPlayer implements PlaybackListener {
 	private void close() {
 		if (audio != null && audio.isOpen()) {
 			audio.close();
+   		positionOffset = 0;
 		}
 
 	}

@@ -1058,6 +1058,7 @@ void populateJArtistInstanceFromArtistBrowse(JNIEnv *env, sp_artistbrowse *artis
 		}
 	}
 
+        /*
 	int numTopTracks = sp_artistbrowse_num_tophit_tracks(artistBrowse);
 	if (numTopTracks > 0) {
 		jmethodID jMethod = (*env)->GetMethodID(env, jClass, "addTopHitTrack", "(Ljahspotify/media/Link;)V");
@@ -1085,6 +1086,7 @@ void populateJArtistInstanceFromArtistBrowse(JNIEnv *env, sp_artistbrowse *artis
 			}
 		}
 	}
+        */
 
 	const char *bios = sp_artistbrowse_biography(artistBrowse);
 

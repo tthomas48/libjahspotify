@@ -48,7 +48,6 @@ public class MediaPlayer implements PlaybackListener {
 	public void changeSong() {
 		close();
 		audio = null;
-		positionOffset = 0;
 	}
 
 	/**

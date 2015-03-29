@@ -13,6 +13,7 @@ import java.util.Queue;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 
 /**
@@ -33,6 +34,7 @@ public class MediaPlayer implements PlaybackListener {
 	private Track currentTrack;
 	private boolean playing = false;
 	private int volume = 100;
+	private Mixer.Info mixerInfo;
 
 	private static MediaPlayer instance;
 
@@ -240,7 +242,7 @@ public class MediaPlayer implements PlaybackListener {
 				}
 			}
 
-			audio = AudioSystem.getSourceDataLine(format);
+			audio = AudioSystem.getSourceDataLine(format, mixerInfo);
 			audio.open(format, rate * 4);
 			setVolumeToAudio(volume);
 			audio.start();
@@ -378,6 +380,10 @@ public class MediaPlayer implements PlaybackListener {
 
 	public List<Track> getHistory() {
 		return history;
+	}
+	
+	public void setMixerInfo(Mixer.Info mixerInfo) {
+		this.mixerInfo = mixerInfo;
 	}
 
 	private void close() {

@@ -127,7 +127,7 @@ public class MediaPlayer implements PlaybackListener {
 		if (playing) {
 			spotify.pause();
 			if (audio != null && audio.isOpen()) {
-  				audio.stop();
+				audio.stop();
 			}
 		} else {
 			spotify.resume();
@@ -381,7 +381,7 @@ public class MediaPlayer implements PlaybackListener {
 	public List<Track> getHistory() {
 		return history;
 	}
-	
+
 	public void setMixerInfo(Mixer.Info mixerInfo) {
 		this.mixerInfo = mixerInfo;
 	}
@@ -389,7 +389,7 @@ public class MediaPlayer implements PlaybackListener {
 	private void close() {
 		if (audio != null && audio.isOpen()) {
 			audio.close();
-   		positionOffset = 0;
+			positionOffset = 0;
 		}
 
 	}

@@ -26,7 +26,7 @@ public interface JahSpotify {
 	 * 
 	 * @param cacheFolder
 	 */
-	public void initialize(String cacheFolder);
+	public void initialize(byte[] keydata, String cacheFolder);
 
 	/**
 	 * Stops libJahSpotify.

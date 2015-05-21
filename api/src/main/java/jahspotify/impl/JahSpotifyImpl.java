@@ -323,7 +323,7 @@ public class JahSpotifyImpl implements JahSpotify
     }
 
     @Override
-	public synchronized void initialize(final String cacheFolder) {
+	public synchronized void initialize(final byte[] keydata, final String cacheFolder) {
         if (_jahSpotifyThread != null)
             return;
 
@@ -332,7 +332,7 @@ public class JahSpotifyImpl implements JahSpotify
             @Override
             public void run()
             {
-            	nativeInitialize(cacheFolder);
+            	nativeInitialize(keydata, cacheFolder);
             }
         };
         _jahSpotifyThread.start();
@@ -894,7 +894,7 @@ public class JahSpotifyImpl implements JahSpotify
     	return status;
     }
 
-    private native int nativeInitialize(String cacheFolder);
+    private native int nativeInitialize(byte[] keydata, String cacheFolder);
     private native int nativeDestroy();
 	private native int nativeLogin(String username, String password, String blob, boolean savePassword);
 	private native void nativeLogout();

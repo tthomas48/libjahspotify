@@ -268,7 +268,7 @@ public class MediaPlayer implements PlaybackListener {
 	public int getPosition() {
 		if (audio == null)
 			return 0;
-		return positionOffset + (int) audio.getMicrosecondPosition() / 1000;
+		return (int) (audio.getMicrosecondPosition() / 1000000L);
 	}
 
 	public int getVolume() {

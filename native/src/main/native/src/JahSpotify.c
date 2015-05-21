@@ -24,12 +24,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/stat.h>
 
 #include "Logging.h"
 #include "JNIHelpers.h"
 #include "JahSpotify.h"
 #include "jahspotify_impl_JahSpotifyImpl.h"
-#include "AppKey.h"
 #include "Callbacks.h"
 #include "ThreadHelpers.h"
 
@@ -425,7 +425,7 @@ static sp_session_callbacks session_callbacks = { .message_to_user = &message_to
 
 static sp_session_config spconfig = { .api_version = SPOTIFY_API_VERSION, .cache_location = "", // set in main
 		.settings_location = "", // set in main
-		.application_key = g_appkey, .application_key_size = 0, // Set in main()
+		.application_key = NULL, .application_key_size = 0, // Set in main()
 		.user_agent = "jahspotify/0.0.1", .callbacks = &session_callbacks, NULL , };
 
 static void SP_CALLCONV searchCompleteCallback(sp_search *result, void *userdata) {
@@ -1529,10 +1529,12 @@ static void track_ended(void) {
 	}
 }
 
-JNIEXPORT jint JNICALL Java_jahspotify_impl_JahSpotifyImpl_nativeInitialize(JNIEnv *env, jobject obj, jstring cacheFolder) {
+JNIEXPORT jint JNICALL Java_jahspotify_impl_JahSpotifyImpl_nativeInitialize(JNIEnv *env, jobject obj, jbyteArray keyData, jstring cacheFolder) {
 	sp_session *sp;
 	sp_error err;
 	int next_timeout = 0;
+  int keySize;
+  uint8_t* nativeKeyData = NULL;
 
 	pthread_mutex_init(&g_loading_mutex, NULL );
 	pthread_mutex_init(&g_notify_mutex, NULL );
@@ -1544,8 +1546,12 @@ JNIEXPORT jint JNICALL Java_jahspotify_impl_JahSpotifyImpl_nativeInitialize(JNIE
 	spconfig.cache_location = nativeCacheFolder;
 	spconfig.settings_location = nativeCacheFolder;
 
+  keySize = (*env)->GetArrayLength(env, keyData);
+  nativeKeyData = (uint8_t*)(*env)->GetByteArrayElements(env, keyData, 0);
+
 	/* Create session */
-	spconfig.application_key_size = g_appkey_size;
+  spconfig.application_key = nativeKeyData;
+	spconfig.application_key_size = keySize;
 	err = sp_session_create(&spconfig, &sp);
 
 	if (SP_ERROR_OK != err) {
@@ -1617,6 +1623,9 @@ JNIEXPORT jint JNICALL Java_jahspotify_impl_JahSpotifyImpl_nativeInitialize(JNIE
 	sp_session_release(g_sess);
 
 	if (nativeCacheFolder) (*env)->ReleaseStringUTFChars(env, cacheFolder, nativeCacheFolder);
+  if(nativeKeyData != NULL ) {
+    (*env)->ReleaseByteArrayElements(env, keyData, (jbyte*) nativeKeyData, 0);
+  }
 	signalInitialized(0);
 	return 0;
 }

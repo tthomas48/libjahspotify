@@ -12,6 +12,7 @@ import javax.annotation.PreDestroy;
  */
 public class JahSpotifyService
 {
+	private static byte[] keyData;
 	private static String tempFolder;
     private JahSpotify _jahSpotify;
 
@@ -36,7 +37,8 @@ public class JahSpotifyService
     	return instance != null;
     }
 
-    public static void initialize(File tempFolder) {
+    public static void initialize(byte[] keyData, File tempFolder) {
+    	JahSpotifyService.keyData = keyData;
     	if (tempFolder == null || !tempFolder.isDirectory() || !tempFolder.exists())
     		throw new RuntimeException("The tempfolder should be a directory and it should already exist.");
     	JahSpotifyService.tempFolder = tempFolder.getAbsolutePath();
@@ -60,7 +62,7 @@ public class JahSpotifyService
             _jahSpotify = JahSpotifyImpl.getInstance();
 
             if (!_jahSpotify.isStarted()) {
-            	_jahSpotify.initialize(tempFolder);
+            	_jahSpotify.initialize(keyData, tempFolder);
             }
             _jahSpotify.addPlaybackListener(MediaPlayer.getInstance());
         }

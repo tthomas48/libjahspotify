@@ -31,7 +31,7 @@ public class JahSpotifyNativeLoader {
 		}
 		// libspotify for linux users.
 		if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-			toLoad.add("libspotify.so");
+//			toLoad.add("libspotify.so");
 		}
 		toLoad.add(System.mapLibraryName("jahspotify"));
 

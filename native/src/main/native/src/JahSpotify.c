@@ -533,12 +533,12 @@ JNIEXPORT jobject JNICALL Java_jahspotify_impl_JahSpotifyImpl_retrieveUser(JNIEn
 	log_error("jahspotify", "Java_jahspotify_impl_JahSpotifyImpl_retrieveUser", "Retrieving user");
 
 	int count = 0;
-	while (!sp_user_is_loaded(user) && count < 4) {
+	while (!sp_user_is_loaded(user) && count < 20) {
 		usleep(250);
 		count++;
 	}
 
-	if (count == 4) {
+	if (count == 20) {
 		log_warn("jahspotify", "Java_jahspotify_impl_JahSpotifyImpl_retrieveUser", "Timeout while waiting for user to load");
 		return NULL ;
 	}
